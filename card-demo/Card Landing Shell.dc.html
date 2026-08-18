@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; }
+    a { color: #FFFFFF; }
+    a:hover { opacity: 0.8; }
+    @keyframes shellPromptPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: translateY(-4px) scale(1.03); opacity: 1; }
+    }
+  </style>
+</helmet>
+
+<!-- THEME CONFIG: background photo + torn-paper card live in ./assets -->
+<div style="
+  --page-bg: url('./assets/kitchen-bg.png') center center / cover no-repeat;
+  --ink: #2b2724;
+  --ink-soft: #55504b;
+  --player: #7a1c16;
+  --on-photo: #FFFFFF;
+  --font-hand: 'Caveat', cursive;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: clamp(24px, 6vh, 56px) 16px; background: var(--page-bg); font-family: var(--font-mono);
+  color: var(--on-photo); position: relative; overflow: hidden;
+">
+
+
+  <!-- TEASER + tap-to-open: shown while the note is put away -->
+  <sc-if value="{{ showOpenPrompt }}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 26px;">
+      <p data-comment-anchor="teaser-text" style="margin: 0; font-family: var(--font-mono); font-size: clamp(17px, 5.5vw, 22px); font-weight: 500; text-align: center; color: var(--on-photo); text-shadow: 0 2px 12px rgba(0,0,0,0.55); max-width: min(440px, 92vw);">Someone sent you <br>a special message!</p>
+      <button onClick="{{ openEnvelope }}" style="animation: shellPromptPulse 2.4s ease-in-out infinite; background: #FBFAF8; border: 1px solid #E4DFD9; color: #4a4440; font-family: var(--font-mono); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; padding: 12px 20px; border-radius: 999px; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(20,20,25,0.35); white-space: nowrap;">
+        Tap to open
+      </button>
+    </div>
+  </sc-if>
+
+  <!-- TORN-PAPER NOTE: design space 645x655 (crop of the 1920x1080 card art), scales to fit -->
+  <sc-if value="{{ stageMounted }}" hint-placeholder-val="{{ false }}">
+    <div style="width: {{ stageW }}px; height: {{ stageH }}px; position: relative;">
+      <div style="position: absolute; top: 0; left: 0; width: 645px; height: 655px; transform-origin: top left; transform: {{ stageScale }};">
+        <div style="position: absolute; inset: 0; transition: opacity 0.6s ease, transform 0.85s cubic-bezier(.3,1.05,.4,1); opacity: {{ noteOpacity }}; transform: {{ noteTransform }};">
+          <div style="position: absolute; inset: 0; background: url('./assets/card-paper.png') -640px -215px / 1920px 1080px no-repeat; pointer-events: none;"></div>
+
+          <!-- NOTE CONTENT -->
+          <div style="position: absolute; left: 72px; top: 40px; height: 575px; width: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 0 36px;">
+            <div data-comment-anchor="header-zone">
+              <span style="font-family: var(--font-hand); font-size: 40px; font-weight: 600; color: var(--ink); line-height: 1.1;">Hey Suze,</span>
+            </div>
+            <div data-comment-anchor="message-zone">
+              <p style="margin: 0; font-family: var(--font-hand); font-size: 33px; font-weight: 500; line-height: 1.3; color: var(--ink); text-wrap: pretty;">Just wanted you to know you've been on my mind. while you're away at college. I miss our dinner dates!<br></p>
+            </div>
+
+            <!-- AUDIO ZONE: player sits on the paper -->
+            <div data-comment-anchor="audio-zone" style="width: 400px; max-width: 100%; margin-top: 22px; display: flex; align-items: center; gap: 16px; text-align: left;">
+              <!-- THEME/CONTENT: set a real audio file as this element's src — the player detects it on mount and enables playback automatically. -->
+              <audio ref="{{ audioRef }}" preload="none" onLoadedMetadata="{{ handleLoadedMetadata }}" onTimeUpdate="{{ handleTimeUpdate }}" onPlay="{{ handlePlay }}" onPause="{{ handlePause }}" onEnded="{{ handleEnded }}"></audio>
+              <button onClick="{{ togglePlay }}" disabled="{{ audioDisabled }}" style="flex: none; width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid var(--player); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: rgba(122,28,22,0.06);">
+                <sc-if value="{{ isPaused }}" hint-placeholder-val="{{ true }}">
+                  <span style="width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid var(--player); margin-left: 3px;"></span>
+                </sc-if>
+                <sc-if value="{{ isPlaying }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: flex; gap: 4px;">
+                    <span style="width: 4px; height: 14px; background: var(--player); border-radius: 1px;"></span>
+                    <span style="width: 4px; height: 14px; background: var(--player); border-radius: 1px;"></span>
+                  </span>
+                </sc-if>
+              </button>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <span style="font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--player); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Come visit soon!</span>
+                <input type="range" min="0" step="0.1" max="{{ progressMax }}" value="{{ progressValue }}" onChange="{{ onSeek }}" disabled="{{ audioDisabled }}" style="width: 100%; accent-color: var(--player); height: 4px; margin: 0;">
+                <span style="font-family: var(--font-mono); font-size: 11px; color: var(--player);">{{ elapsedLabel }}</span>
+              </div>
+            </div>
+
+            <div data-comment-anchor="closing-zone" style="margin-top: 20px; display: flex; flex-direction: column; gap: 0px;">
+              <span style="font-family: var(--font-hand); font-size: 36px; font-weight: 600; color: var(--ink); line-height: 1.15;">Miss you,</span>
+              <span style="font-family: var(--font-hand); font-size: 36px; font-weight: 600; color: var(--ink); line-height: 1.15;">Aunt Carol</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showTuckAway }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ tuckAway }}" style="margin-top: 10px; background: none; border: none; padding: 12px; font-family: var(--font-mono); font-size: 13px; color: var(--on-photo); text-shadow: 0 1px 8px rgba(0,0,0,0.55); text-decoration: underline; cursor: pointer; transition: opacity 0.45s ease, transform 0.5s ease; will-change: opacity, transform; {{ tuckAwayStyle }}">
+      Tuck it back in
+    </button>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;autoOpenOnLoad&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behavior&quot;},
+  &quot;enableTuckAway&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behavior&quot;},
+  &quot;autoPlayAudioOnOpen&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behavior&quot;}
+}">
+class Component extends DCLogic {
+  // Torn-paper note reveal (reference: Comfort-01) + on-card audio player.
+
+  state = {
+    stageMounted: false, // note in the DOM (kept during the tuck-away exit animation)
+    open: false,         // note settled into place
+    contentVisible: false, // tuck-away control faded in
+    isPlaying: false,
+    currentTime: 0,
+    duration: 0,
+    hasAudioSrc: false,
+  };
+
+  audioRef = React.createRef();
+  _timers = [];
+
+  componentDidMount() {
+    const audio = this.audioRef.current;
+    if (audio && audio.currentSrc) this.setState({ hasAudioSrc: true });
+    this._onResize = () => this.forceUpdate();
+    window.addEventListener('resize', this._onResize);
+    if (this.props.autoOpenOnLoad === true) this.openEnvelope();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const justOpened = !prevState.contentVisible && this.state.contentVisible;
+    if (justOpened && this.props.autoPlayAudioOnOpen && this.state.hasAudioSrc) {
+      const audio = this.audioRef.current;
+      if (audio) audio.play().catch(() => {});
+    }
+  }
+
+  componentWillUnmount() {
+    this._timers.forEach(clearTimeout);
+    if (this._onResize) window.removeEventListener('resize', this._onResize);
+  }
+
+  // ---- open / tuck away ----------------------------------------------------
+  openEnvelope = () => {
+    if (this.state.stageMounted) return;
+    this.setState({ stageMounted: true });
+    // let the mounted-at-rest styles paint once before animating to open
+    this._timers.push(setTimeout(() => this.setState({ open: true }), 40));
+    this._timers.push(setTimeout(() => this.setState({ contentVisible: true }), 700));
+  };
+
+  tuckAway = () => {
+    if (!this.state.open) return;
+    const audio = this.audioRef.current;
+    if (audio) audio.pause();
+    this.setState({ open: false, contentVisible: false });
+    this._timers.push(setTimeout(() => this.setState({ stageMounted: false }), 650));
+  };
+
+  // ---- audio player ----------------------------------------------------------
+  togglePlay = () => {
+    const audio = this.audioRef.current;
+    if (!audio || !this.state.hasAudioSrc) return;
+    if (audio.paused) audio.play().catch(() => {});
+    else audio.pause();
+  };
+
+  onSeek = (e) => {
+    const audio = this.audioRef.current;
+    if (!audio || !this.state.hasAudioSrc) return;
+    audio.currentTime = Number(e.target.value);
+    this.setState({ currentTime: audio.currentTime });
+  };
+
+  handleLoadedMetadata = () => {
+    const audio = this.audioRef.current;
+    this.setState({ duration: audio.duration || 0, hasAudioSrc: true });
+  };
+  handleTimeUpdate = () => this.setState({ currentTime: this.audioRef.current.currentTime });
+  handlePlay = () => this.setState({ isPlaying: true });
+  handlePause = () => this.setState({ isPlaying: false });
+  handleEnded = () => this.setState({ isPlaying: false, currentTime: 0 });
+
+  formatTime(sec) {
+    if (!sec || !isFinite(sec) || sec < 0) return '00:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  renderVals() {
+    const { stageMounted, open, contentVisible, isPlaying, currentTime, duration, hasAudioSrc } = this.state;
+
+    // Note design space is 645x655; scale to fit, leaving ~80px below for the tuck-away control.
+    const s = Math.min(1, (window.innerWidth - 32) / 645, (window.innerHeight - 130) / 655);
+
+    return {
+      showOpenPrompt: !stageMounted,
+      stageMounted,
+      stageW: Math.round(645 * s),
+      stageH: Math.round(655 * s),
+      stageScale: `scale(${s})`,
+
+      // note fades and settles from slightly larger, like the reference
+      noteOpacity: open ? 1 : 0,
+      noteTransform: open ? 'scale(1)' : 'scale(1.08)',
+
+      tuckAwayStyle: contentVisible
+        ? 'opacity:1; transform:translateY(0); transition-delay:0.1s;'
+        : 'opacity:0; transform:translateY(10px); transition-delay:0s;',
+
+      isPlaying,
+      isPaused: !isPlaying,
+      audioDisabled: !hasAudioSrc,
+      progressValue: currentTime,
+      progressMax: duration || 0,
+      elapsedLabel: this.formatTime(currentTime),
+
+      showTuckAway: this.props.enableTuckAway !== false && stageMounted,
+
+      audioRef: this.audioRef,
+      openEnvelope: this.openEnvelope,
+      tuckAway: this.tuckAway,
+      togglePlay: this.togglePlay,
+      onSeek: this.onSeek,
+      handleLoadedMetadata: this.handleLoadedMetadata,
+      handleTimeUpdate: this.handleTimeUpdate,
+      handlePlay: this.handlePlay,
+      handlePause: this.handlePause,
+      handleEnded: this.handleEnded,
+    };
+  }
+}
+</script>
+</body>
+</html>
