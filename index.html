@@ -416,7 +416,7 @@
         <div style="background:#FFFDF9;border:1px solid #DED2C2;border-radius:6px;padding:40px;text-align:center;box-shadow:0 14px 34px rgba(60,30,20,0.1)">
           <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#7C2A1E;margin-bottom:16px">Order placed</div>
           <h2 style="font-family:'Biro Script','Caveat',cursive;font-weight:600;font-size:32px;color:#241E1A;margin:0 0 14px">Your card is on its way.</h2>
-          <p style="font-family:'Montserrat',sans-serif;font-size:15px;line-height:1.7;color:#4A4038;margin:0 0 24px">Order # PS-100482 (placeholder). Your number and special code are on their way to your email, and your recording will be ready around your reveal date.</p>
+          <p style="font-family:'Montserrat',sans-serif;font-size:15px;line-height:1.7;color:#4A4038;margin:0 0 24px">A payment receipt is on its way to your email from Stripe. Your card code and instructions are on their way too, and your recording will be ready around your reveal date.</p>
           <button style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:#F4EFE7;background:#7C2A1E;border:none;border-radius:3px;padding:14px 24px;cursor:pointer" onClick="{{ goHome }}">Back to home</button>
         </div>
       </section>
@@ -572,25 +572,11 @@
         </div>
 
         <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#7C2A1E;margin-bottom:6px">Payment</div>
-        <p style="font-family:'Montserrat',sans-serif;font-size:11.5px;color:#8a8078;margin:0 0 14px">Placeholder — payment integration coming soon.</p>
-        <label style="display:block;margin-bottom:14px">
-          <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8078;margin-bottom:6px">Card number</div>
-          <input type="text" placeholder="•••• •••• •••• ••••" value="{{ cardNumber }}" onChange="{{ setCardNumber }}" style="width:100%;border:none;border-bottom:1.5px solid #DED2C2;background:transparent;font-family:'Montserrat',sans-serif;font-size:15px;color:#241E1A;padding:6px 0;outline:none">
-        </label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-          <label style="display:block">
-            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8078;margin-bottom:6px">Expiration</div>
-            <input type="text" placeholder="MM / YY" value="{{ cardExpiry }}" onChange="{{ setCardExpiry }}" style="width:100%;border:none;border-bottom:1.5px solid #DED2C2;background:transparent;font-family:'Montserrat',sans-serif;font-size:15px;color:#241E1A;padding:6px 0;outline:none">
-          </label>
-          <label style="display:block">
-            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8078;margin-bottom:6px">CVC</div>
-            <input type="text" placeholder="•••" value="{{ cardCvc }}" onChange="{{ setCardCvc }}" style="width:100%;border:none;border-bottom:1.5px solid #DED2C2;background:transparent;font-family:'Montserrat',sans-serif;font-size:15px;color:#241E1A;padding:6px 0;outline:none">
-          </label>
-        </div>
-        <label style="display:block;margin-bottom:22px">
-          <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8078;margin-bottom:6px">Billing ZIP</div>
-          <input type="text" value="{{ billingZip }}" onChange="{{ setBillingZip }}" style="width:100%;border:none;border-bottom:1.5px solid #DED2C2;background:transparent;font-family:'Montserrat',sans-serif;font-size:15px;color:#241E1A;padding:6px 0;outline:none">
-        </label>
+        <p style="font-family:'Montserrat',sans-serif;font-size:11.5px;color:#8a8078;margin:0 0 6px">You'll enter your card details on Stripe's secure payment page next. Nothing is stored on our site.</p>
+        <p style="font-family:'Montserrat',sans-serif;font-size:11.5px;color:#8a8078;margin:0 0 14px">Personally Said is a brand of Waymaker Studios, LLC — your statement will show a charge from <strong style="color:#4A4038">Waymaker Studios</strong>.</p>
+        <sc-if value="{{ ckCheckoutErrorShown }}" hint-placeholder-val="{{ false }}">
+          <p style="font-family:'Montserrat',sans-serif;font-size:12.5px;color:#7C2A1E;background:#FBEFE9;border-radius:4px;padding:10px 12px;margin:0 0 16px">{{ ckCheckoutError }}</p>
+        </sc-if>
 
         <label style="display:block;margin-bottom:14px">
           <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8078;margin-bottom:6px">Your mobile phone number</div>
@@ -609,7 +595,7 @@
           <p style="margin:0">By providing your phone number and checking the box above, you agree to receive text messages from Personally Said. Consent is not required to make a purchase.</p>
         </div>
 
-        <button style="width:100%;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:#F4EFE7;background:#7C2A1E;border:none;border-radius:3px;padding:16px;cursor:pointer" onClick="{{ submitOrder }}">Place order</button>
+        <button style="width:100%;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;color:#F4EFE7;background:#7C2A1E;border:none;border-radius:3px;padding:16px;cursor:pointer;opacity:{{ ckCheckoutButtonOpacity }}" onClick="{{ goToStripeCheckout }}">{{ ckCheckoutButtonLabel }}</button>
         <p style="font-family:'Montserrat',sans-serif;font-size:11.5px;color:#8a8078;margin:12px 0 0;line-height:1.5">Turnaround time and reveal date depend on the length you selected.</p>
         </div>
       </div>
@@ -675,37 +661,60 @@ class Component extends DCLogic {
   goToMobile = (page) => this.setState({ page, mobileMenuOpen: false });
   goToCheckoutGenericMobile = () => this.setState({ page: 'checkout', orderSubmitted: false, mobileMenuOpen: false });
 
-  state = {
-    isMobile: false,
-    mobileMenuOpen: false,
-    heroLine1Shown: false,
-    heroLine2Shown: false,
-    heroSubheadShown: false,
-    page: 'home',
-    selectedTier: null,
-    selectedDesign: 'everyday',
-    ckFromName: '',
-    ckStage: 'details',
-    ckRecipientName: '',
-    ckRecipientEmail: '',
-    selectedTemplate: '',
-    customTrackDetail: '',
+  state = (() => {
+    const base = {
+      isMobile: false,
+      mobileMenuOpen: false,
+      heroLine1Shown: false,
+      heroLine2Shown: false,
+      heroSubheadShown: false,
+      page: 'home',
+      selectedTier: null,
+      selectedDesign: 'everyday',
+      ckFromName: '',
+      ckStage: 'details',
+      ckRecipientName: '',
+      ckRecipientEmail: '',
+      selectedTemplate: '',
+      customTrackDetail: '',
 
-    revealDate: '',
-    deliveryName: '',
-    deliveryContact: '',
-    addonsOpen: false,
-    addonPrinted: false,
-    addonSpeaker: false,
-    addonVinyl: false,
-    shipName: '', shipAddress1: '', shipAddress2: '', shipCity: '', shipState: '', shipZip: '',
-    cardNumber: '', cardExpiry: '', cardCvc: '', billingZip: '',
-    smsPhone: '', smsOptIn: false,
-    orderSubmitted: false,
-    demoPlaying: false,
-    demoTime: 0,
-    demoDuration: 0
-  };
+      revealDate: '',
+      deliveryName: '',
+      deliveryContact: '',
+      addonsOpen: false,
+      addonPrinted: false,
+      addonSpeaker: false,
+      addonVinyl: false,
+      shipName: '', shipAddress1: '', shipAddress2: '', shipCity: '', shipState: '', shipZip: '',
+      cardNumber: '', cardExpiry: '', cardCvc: '', billingZip: '',
+      smsPhone: '', smsOptIn: false,
+      orderSubmitted: false,
+      demoPlaying: false,
+      demoTime: 0,
+      demoDuration: 0,
+      ckCheckoutLoading: false,
+      ckCheckoutError: ''
+    };
+
+    // Restore state after returning from Stripe Checkout's hosted payment page.
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const orderResult = params.get('order');
+      const tierParam = params.get('tier');
+      if (orderResult === 'success') {
+        base.page = 'checkout';
+        base.orderSubmitted = true;
+        if (tierParam && ['hello', 'catchup', 'stories'].includes(tierParam)) base.selectedTier = tierParam;
+      } else if (orderResult === 'cancelled') {
+        base.page = 'checkout';
+        base.ckStage = 'payment';
+        if (tierParam && ['hello', 'catchup', 'stories'].includes(tierParam)) base.selectedTier = tierParam;
+        base.ckCheckoutError = 'Checkout was cancelled — no charge was made. You can try again below.';
+      }
+    } catch (e) { /* URLSearchParams unavailable — ignore, defaults stand */ }
+
+    return base;
+  })();
 
   demoToggle = () => {
     const a = this._demoAudio;
@@ -736,6 +745,35 @@ class Component extends DCLogic {
     return { ckStage: 'payment' };
   });
   goCkDetails = () => { window.scrollTo(0, 0); this.setState({ ckStage: 'details' }); };
+  goToStripeCheckout = () => {
+    const s = this.state;
+    if (!s.selectedTier || s.ckCheckoutLoading) return;
+    this.setState({ ckCheckoutLoading: true, ckCheckoutError: '' });
+    fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tier: s.selectedTier,
+        fromName: s.ckFromName,
+        recipientName: s.ckRecipientName,
+        recipientEmail: s.ckRecipientEmail,
+        design: s.selectedTemplate || s.selectedDesign,
+        revealDate: s.revealDate,
+        customTrackDetail: s.customTrackDetail
+      })
+    })
+      .then((r) => r.json().then((data) => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (ok && data && data.url) {
+          window.location.href = data.url;
+        } else {
+          this.setState({ ckCheckoutLoading: false, ckCheckoutError: (data && data.error) || 'Something went wrong starting checkout. Please try again.' });
+        }
+      })
+      .catch(() => {
+        this.setState({ ckCheckoutLoading: false, ckCheckoutError: 'Something went wrong starting checkout. Please check your connection and try again.' });
+      });
+  };
   toggleAddonsOpen = () => this.setState((s) => ({ addonsOpen: !s.addonsOpen }));
   toggleAddon = (key) => this.setState((s) => ({ [key]: !s[key] }));
   toggleSmsOptIn = () => this.setState((s) => ({ smsOptIn: !s.smsOptIn }));
@@ -968,7 +1006,13 @@ class Component extends DCLogic {
       orderTotal,
       orderSubmitted: st.orderSubmitted,
       notOrderSubmitted: !st.orderSubmitted,
-      submitOrder: this.submitOrder
+      submitOrder: this.submitOrder,
+
+      goToStripeCheckout: this.goToStripeCheckout,
+      ckCheckoutError: st.ckCheckoutError,
+      ckCheckoutErrorShown: !!st.ckCheckoutError,
+      ckCheckoutButtonLabel: st.ckCheckoutLoading ? 'Redirecting to secure payment…' : 'Continue to secure payment',
+      ckCheckoutButtonOpacity: st.ckCheckoutLoading ? '0.65' : '1'
     };
   }
 }

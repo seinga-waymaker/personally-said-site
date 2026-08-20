@@ -1,0 +1,9 @@
+{
+  "name": "personally-said-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Personally Said — static site with a Vercel serverless function for Stripe Checkout.",
+  "dependencies": {
+    "stripe": "^17.4.0"
+  }
+}
