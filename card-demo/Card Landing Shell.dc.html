@@ -66,7 +66,7 @@
             <!-- AUDIO ZONE: player sits on the paper -->
             <div data-comment-anchor="audio-zone" style="width: 400px; max-width: 100%; margin-top: 22px; display: flex; align-items: center; gap: 16px; text-align: left;">
               <!-- THEME/CONTENT: set a real audio file as this element's src — the player detects it on mount and enables playback automatically. -->
-              <audio ref="{{ audioRef }}" preload="none" onLoadedMetadata="{{ handleLoadedMetadata }}" onTimeUpdate="{{ handleTimeUpdate }}" onPlay="{{ handlePlay }}" onPause="{{ handlePause }}" onEnded="{{ handleEnded }}"></audio>
+              <audio ref="{{ audioRef }}" src="../uploads/SAMPLE-AuntCarol.mp3" preload="metadata" onLoadedMetadata="{{ handleLoadedMetadata }}" onTimeUpdate="{{ handleTimeUpdate }}" onPlay="{{ handlePlay }}" onPause="{{ handlePause }}" onEnded="{{ handleEnded }}"></audio>
               <button onClick="{{ togglePlay }}" disabled="{{ audioDisabled }}" style="flex: none; width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid var(--player); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer;" style-hover="background: rgba(122,28,22,0.06);">
                 <sc-if value="{{ isPaused }}" hint-placeholder-val="{{ true }}">
                   <span style="width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid var(--player); margin-left: 3px;"></span>
