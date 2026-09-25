@@ -120,6 +120,7 @@ async function createManualCard(req, res) {
     created_at: now.toISOString(),
     fulfilled_at: now.toISOString(),
     notes: clean(body.notes),
+    card_id: clean(body.card_id), // optional, e.g. legacy "CARD-0002"
     stripe_session_id: '',
     customer_email: clean(body.customer_email),
     purchaser_name: clean(body.purchaser_name),
