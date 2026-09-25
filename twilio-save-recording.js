@@ -35,8 +35,8 @@ exports.handler = async function (context, event, callback) {
   response.appendHeader('Content-Type', 'application/json');
 
   try {
-    const code = (event.code || '').trim();
-    const guestPhone = event.guest_phone || event.From || '';
+        const code = (event.code || event.Code || '').trim();
+          const guestPhone = event.guest_phone || event.From || '';
     const channel = event.channel || (event.recording_sid ? 'call' : 'text');
     let mediaUrl = event.recording_url || event.RecordingUrl || event.MediaUrl0;
     const sid = event.recording_sid || event.RecordingSid || event.MessageSid || '';
