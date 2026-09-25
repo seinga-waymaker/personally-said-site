@@ -10,6 +10,8 @@
 // Same dependencies/env vars as twilio-save-recording.js: axios, @vercel/blob,
 // PS_API_BASE, PS_LOOKUP_TOKEN.
 //
+// ps-raw is a PRIVATE Vercel Blob store: uploads must use access: 'private'.
+//
 // Call this from Studio with parameters:
 //   code          - card code
 //   guest_phone   - the caller/texter's number
@@ -41,7 +43,7 @@ exports.handler = async function (context, event, callback) {
     let blobUrl = null;
 
     if (mediaUrl) {
-      const fetchUrl = /.w+$/.test(mediaUrl) ? mediaUrl : `${mediaUrl}.mp3`;
+      const fetchUrl = /\.\w+$/.test(mediaUrl) ? mediaUrl : `${mediaUrl}.mp3`;
       const mediaRes = await axios.get(fetchUrl, {
         responseType: 'arraybuffer',
         auth: { username: context.ACCOUNT_SID, password: context.AUTH_TOKEN },
@@ -52,11 +54,11 @@ exports.handler = async function (context, event, callback) {
       }
       const contentType = mediaRes.headers['content-type'] || 'audio/mpeg';
       const buffer = Buffer.from(mediaRes.data);
-      const last4 = (guestPhone || '').replace(/D/g, '').slice(-4) || 'anon';
+      const last4 = (guestPhone || '').replace(/\D/g, '').slice(-4) || 'anon';
       const pathname = `ps-raw/cards/${code}/names/${last4}.mp3`;
 
       const blob = await upload(pathname, buffer, {
-        access: 'public',
+        access: 'private',
         contentType,
         handleUploadUrl: `${context.PS_API_BASE}/api/blob-upload-token`,
         clientPayload: JSON.stringify({
