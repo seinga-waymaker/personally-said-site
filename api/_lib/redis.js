@@ -25,6 +25,9 @@ const keys = {
   keypad: (digits) => `keypad:${digits}`, // phone keypad digits -> card code
   session: (id) => `session:${id}`,       // Stripe checkout session id -> card code (idempotency)
   orders: 'orders',                       // sorted set: score = created (unix s), member = card code
+  clips: (code) => `clips:${code}`,       // list: ordered guest voice/photo/video clips for a card
+  guest: (code, phone) => `guest:${code}:${phone}`, // per-card-per-phone: {name, name_clip_url, ...}
+  events: (code) => `events:${code}`,     // list: activity log entries for a card
 };
 
 // Upstash auto-parses values that look like JSON, so an all-digit code such as
