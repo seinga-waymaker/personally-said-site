@@ -1,4 +1,6 @@
-// Twilio Function: save-recording
+
+
+    // Twilio Function: save-recording
 //
 // Thin forwarder (same pattern as lookup-code): fetches the guest's voice
 // memo bytes from Twilio's own media URL using the credentials every
@@ -12,6 +14,10 @@
 // Environment variables needed (same ones lookup-code already uses):
 //   PS_API_BASE   = https://www.personallysaid.co
 //   PS_LOOKUP_TOKEN = <same shared secret already in use>
+//
+// ps-raw is a PRIVATE Vercel Blob store: uploads must use access: 'private'
+// (see note in blob-upload-token.js). Reading these URLs back later requires
+// the Blob SDK's get() with the same access level, not a bare fetch.
 //
 // Call this from Studio with parameters:
 //   code          - card code (from the earlier lookup step)
@@ -43,7 +49,7 @@ exports.handler = async function (context, event, callback) {
       return callback(null, response);
     }
 
-    if (channel === 'call' && !/.w+$/.test(mediaUrl)) mediaUrl = `${mediaUrl}.mp3`;
+    if (channel === 'call' && !/\.\w+$/.test(mediaUrl)) mediaUrl = `${mediaUrl}.mp3`;
 
     const mediaRes = await axios.get(mediaUrl, {
       responseType: 'arraybuffer',
@@ -62,11 +68,11 @@ exports.handler = async function (context, event, callback) {
       : contentType.includes('ogg') ? 'ogg' : 'audio';
 
     const stamp = new Date().toISOString().replace(/[:.]/g, '').slice(0, 15);
-    const last4 = (guestPhone || '').replace(/D/g, '').slice(-4) || 'anon';
+    const last4 = (guestPhone || '').replace(/\D/g, '').slice(-4) || 'anon';
     const pathname = `ps-raw/cards/${code}/clips/${stamp}_${channel}_${last4}.${ext}`;
 
     const blob = await upload(pathname, buffer, {
-      access: 'public',
+      access: 'private',
       contentType,
       handleUploadUrl: `${context.PS_API_BASE}/api/blob-upload-token`,
       clientPayload: JSON.stringify({
