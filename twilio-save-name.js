@@ -28,8 +28,8 @@ exports.handler = async function (context, event, callback) {
   response.appendHeader('Content-Type', 'application/json');
 
   try {
-    const code = (event.code || '').trim();
-    const guestPhone = event.guest_phone || event.From || '';
+    const code = (event.code || event.Code || '').trim();
+        const guestPhone = event.guest_phone || event.From || '';
     const channel = event.channel || (event.recording_url ? 'call' : 'text');
     const nameText = (event.name_text || '').trim();
     const mediaUrl = event.recording_url || event.RecordingUrl;
