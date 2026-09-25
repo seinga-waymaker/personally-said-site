@@ -46,6 +46,7 @@ module.exports = async (req, res) => {
       found: true,
       active: card.status === 'active',
       code: asCode(card.code),
+      card_id: card.card_id || asCode(card.code), // legacy Sheet cards keep their CARD-000X id
       twilio_code: asCode(card.twilio_code),
       status: card.status,
       recipient_name: card.recipient_name || '',
