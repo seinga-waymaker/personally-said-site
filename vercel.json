@@ -1,0 +1,5 @@
+{
+  "functions": {
+    "api/blob-upload-token.js": { "maxDuration": 60 }
+  }
+}
