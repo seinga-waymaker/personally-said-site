@@ -5,6 +5,7 @@
   "description": "Personally Said — static site with Vercel serverless functions for Stripe Checkout, card codes + Twilio lookup.",
   "dependencies": {
     "@upstash/redis": "^1.35.0",
+    "@vercel/blob": "^2.8.0",
     "stripe": "^17.4.0"
   }
 }
